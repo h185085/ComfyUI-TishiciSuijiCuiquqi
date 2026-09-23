@@ -1,61 +1,63 @@
-# 提示词随机萃取器 (ComfyUI 节点)
+# 提示词随机萃取器 (ComfyUI 節點) / Prompt Random Extractor (ComfyUI Node)
 
-一个纯本地的 ComfyUI 自定义节点，用来从 `.md` / `.txt` 提示词库里**随机抽出一整段**提示词，直接喂给文生图/图生图链路。点一下弹出系统文件选择框，选文件即可。
+一個純本地的 ComfyUI 自訂節點，用來從 `.md` / `.txt` 提示詞庫裡**隨機抽出一整段**提示詞，直接餵給文生圖 / 圖生圖鏈路。點一下彈出系統檔案選擇框，選檔案即可。
 
-![提示词随机萃取器节点界面](docs/node-ui.png)
+A purely local ComfyUI custom node that **randomly extracts an entire paragraph** of prompts from your `.md` / `.txt` prompt library and feeds it directly into your text-to-image / image-to-image pipeline. Click once to open the system file picker and select a file.
 
-## 📥 下载 v1.0.0
+![提示词随机萃取器節點介面 / Node UI](docs/node-ui.png)
 
-👉 [**v1.0.0 提示词随机萃取器**](https://github.com/h185085/ComfyUI-TishiciSuijiCuiquqi/releases/download/v1.0.0/TishiciSuijiCuiquqi-1.0.0.zip) —— 点击文字直链下载 zip，解压后按下方步骤安装。
+## 📥 下載 v1.0.0 / Download v1.0.0
 
-## 特性
+👉 [**v1.0.0 提示词随机萃取器 / Prompt Random Extractor v1.0.0**](https://github.com/h185085/ComfyUI-TishiciSuijiCuiquqi/releases/download/v1.0.0/TishiciSuijiCuiquqi-1.0.0.zip) —— 點擊文字直鏈下載 zip，解壓後按下方步驟安裝。 / Click the link to download the zip directly; extract and follow the steps below to install.
 
-- 📂 **点击加载**：点「📂 加载 提示词」直接弹文件管理器选文件，支持 `.md` / `.txt` / `.prompt` / `.text`，单文件上限 8MB。
-- 🎲 **真随机**：每次运行队列都会重新抽取（已用 `IS_CHANGED` 强制每轮执行，不会被 ComfyUI 缓存吃掉）。
-- ✂️ **整段不切碎**：以「段」为最小单位，绝不从段落中间截断。
-- 🔁 **不重复抽取**：开启后像抽签池，抽完一轮自动重置。
-- 🧩 **完全本地**：文件读取发生在浏览器（FileReader）与 ComfyUI 本地后端，**不连任何外部 / 云端 / LLM API**。
+## 特性 / Features
 
-## 安装
+- 📂 **點擊載入 / Click to Load**：點「📂 載入 提示詞」直接彈檔案管理器選檔案，支援 `.md` / `.txt` / `.prompt` / `.text`，單檔案上限 8MB。 / Click "📂 Load Prompt" to open the file manager and pick a file. Supports `.md` / `.txt` / `.prompt` / `.text`, up to 8MB per file.
+- 🎲 **真隨機 / True Random**：每次執行佇列都會重新抽取（已用 `IS_CHANGED` 強制每輪執行，不會被 ComfyUI 快取吃掉）。 / Re-extracts on every queue run (uses `IS_CHANGED` to force execution each turn, bypassing ComfyUI's cache).
+- ✂️ **整段不切碎 / Whole Paragraph Only**：以「段」為最小單位，絕不從段落中間截斷。 / Always returns a complete paragraph — never truncates mid-paragraph.
+- 🔁 **不重複抽取 / No-Repeat Mode**：開啟後像抽籤池，抽過的不再抽，抽完一輪自動重置。 / Acts like a draw pool; drawn items are not repeated until the pool resets.
+- 🧩 **完全本地 / Fully Local**：檔案讀取發生在瀏覽器（FileReader）與 ComfyUI 本地後端，**不連任何外部 / 雲端 / LLM API**。 / File reading happens in the browser (FileReader) and ComfyUI's local backend — **no external / cloud / LLM API calls**.
 
-1. 把整个 `TishiciSuijiCuiquqi` 文件夹放进 ComfyUI 的 `custom_nodes/` 目录：
+## 安裝 / Installation
+
+1. 把整個 `TishiciSuijiCuiquqi` 資料夾放進 ComfyUI 的 `custom_nodes/` 目錄： / Place the entire `TishiciSuijiCuiquqi` folder into ComfyUI's `custom_nodes/` directory:
    ```
    ComfyUI/custom_nodes/TishiciSuijiCuiquqi/
    ├── __init__.py
    ├── tishici_node.py
    └── web/tishici.js
    ```
-2. 重启 ComfyUI。
-3. 在节点列表搜索「**提示词随机萃取器**」即可拖出使用。
+2. 重啟 ComfyUI。 / Restart ComfyUI.
+3. 在節點列表搜尋「**提示词随机萃取器**」即可拖出使用。 / Search "**提示词随机萃取器**" in the node list to add it.
 
-## 使用
+## 使用 / Usage
 
-1. 双击节点，点「📂 加载 提示词」选一个提示词文件。
-2. 状态栏显示「已加载：xxx.md」。
-3. 设参数：
-   - **模式**：`随机抽一段` / `返回全文`
-   - **分段方式**：`空行分段` / `每行一段` / `自定义正则`
-   - **抽取段数**：一次抽几条（默认 1）
-   - **随机种子**：`-1` = 每次真随机；填具体数字可复现同一段
-   - **不重复抽取**：抽签池模式
-4. 把节点的 `提示词` 输出接到 Qwen 图像推理等节点的文本输入口。
-5. 每次跑队列都会重新随机抽，连续出图就能拿到不同提示词。
+1. 雙擊節點，點「📂 載入 提示詞」選一個提示詞檔案。 / Double-click the node, then click "📂 Load Prompt" to pick a prompt file.
+2. 狀態欄顯示「已載入：xxx.md」。 / The status bar shows "已載入：xxx.md".
+3. 設參數： / Set the parameters:
+   - **模式 / Mode**：`随机抽一段` / `返回全文` — Random paragraph / Full text
+   - **分段方式 / Split mode**：`空行分段` / `每行一段` / `自定義正則` — Blank-line split / Per-line split / Custom regex
+   - **抽取段数 / Count**：一次抽幾條（預設 1）— How many paragraphs per run (default 1)
+   - **随机种子 / Seed**：`-1` = 每次真隨機；填具體數字可復現同一段 — `-1` = fresh random each time; a fixed number reproduces the same paragraph
+   - **不重複抽取 / No-repeat**：抽籤池模式 — Draw-pool mode
+4. 把節點的 `提示詞` 輸出接到 Qwen 圖像推理等節點的文字輸入口。 / Connect the node's `提示詞` output to the text input of nodes such as Qwen image inference.
+5. 每次跑佇列都會重新隨機抽，連續出圖就能拿到不同提示詞。 / Every queue run re-extracts randomly, so consecutive generations use different prompts.
 
-## 参数说明
+## 參數說明 / Parameters
 
-| 参数 | 说明 |
+| 參數 / Parameter | 說明 / Description |
 |---|---|
-| 模式 | 随机抽一段 / 返回全文 |
-| 分段方式 | 空行分段（推荐）、每行一段、自定义正则（如 `第\s*\d+\s*[段条]?`） |
-| 抽取段数 | 一次抽取段落数，1~50 |
-| 随机种子 | -1 真随机；固定值可复现 |
-| 不重复抽取 | 抽过的不再抽，抽完一轮自动重置 |
+| 模式 / Mode | 随机抽一段 / 返回全文 — Random paragraph / Full text |
+| 分段方式 / Split mode | 空行分段（推薦）、每行一段、自定義正則（如 `第\s*\d+\s*[段条]?`）— Blank-line (recommended), per-line, or custom regex (e.g. `第\s*\d+\s*[段条]?`) |
+| 抽取段数 / Count | 一次抽取段落数，1~50 — Paragraphs per run, 1–50 |
+| 随机种子 / Seed | -1 真隨機；固定值可復現 — -1 true random; fixed value reproducible |
+| 不重複抽取 / No-repeat | 抽過的不再抽，抽完一輪自動重置 — Drawn items excluded until the pool resets |
 
-## 注意事项
+## 注意事項 / Notes
 
-- 文件内容会随工作流保存，大文件会让工作流 `.json` 变大（8MB 上限内）。
-- 节点强制每轮执行，因此**每次运行都会消耗一次随机抽取**——这正是随机出图想要的。
+- 檔案內容會隨工作流保存，大檔案會讓工作流 `.json` 變大（8MB 上限內）。 / File contents are saved with the workflow, so large files enlarge the `.json` (within the 8MB limit).
+- 節點強制每輪執行，因此**每次執行都會消耗一次隨機抽取**——這正是隨機出圖想要的。 / The node forces execution every turn, so **each run consumes one random draw** — exactly what randomized generation needs.
 
-## 许可证
+## 許可證 / License
 
 MIT

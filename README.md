@@ -2,7 +2,13 @@
 
 一个纯本地的 ComfyUI 自定义节点，用来从 `.md` / `.txt` 提示词库里**随机抽出一整段**提示词，直接喂给文生图/图生图链路。
 
-界面仿 Qwen TE 的「Skill 加载器」：点一下弹出系统文件选择框，选文件即可，**不用手输路径、不用放指定文件夹、不用重启 ComfyUI**。
+界面仿 [Qwen TE 的「Skill 加载器」](https://space.bilibili.com/361444771)：点一下弹出系统文件选择框，选文件即可，**不用手输路径、不用放指定文件夹、不用重启 ComfyUI**。
+
+![提示词随机萃取器节点界面](docs/node-ui.png)
+
+## 📥 下载 v1.0.0
+
+👉 [**v1.0.0 提示词随机萃取器**](https://github.com/h185085/ComfyUI-TishiciSuijiCuiquqi/releases/download/v1.0.0/TishiciSuijiCuiquqi-1.0.0.zip) —— 点击文字直链下载 zip，解压后按下方步骤安装。
 
 ## 特性
 
